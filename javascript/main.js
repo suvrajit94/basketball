@@ -1,4 +1,4 @@
-"use strict"
+        "use strict"
 
 var Game = function(canvasId){
 	this.canvas = document.getElementById(canvasId);

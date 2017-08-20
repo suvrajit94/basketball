@@ -27,7 +27,7 @@ Score.prototype.draw = function (ctx) {
 var AngleClass = function (x, y){
 	this.x = 200;
 	this.y = 550;
-	this.direction = -1; // Starts out moving left
+	this.direction = -1; // Starts out moving      left
 };
 
 AngleClass.prototype.draw = function(ctx){
@@ -55,7 +55,7 @@ AngleClass.prototype.change = function(newX, newY){
 	}
 };
 
-var Ball = function(x,y,radius){
+var Ball = function(x,y,radius, cntx){
 	this.x = x;
 	this.y = y;
 	this.radius = 0;
@@ -64,6 +64,7 @@ var Ball = function(x,y,radius){
 	this.xVel = 0;
 	this.yVel = 0;
 	this.made = false;
+    this.cntx = cntx;
 };
 
 Ball.prototype.draw = function (ctx){
@@ -148,15 +149,19 @@ Ball.prototype.collide = function(hoop) {
 	//hoop collision -- score
 	if(this.x + this.radius <= hoop.hoopX - 90 && this.x + this.radius >= hoop.hoopX - 160 && this.y + this.radius >= hoop.hoopY + 125 && this.y + this.radius <= hoop.hoopY + 140) {
 		this.made = true;
+        setTimeout( function () {hoop.newDraw();},100);
 		return 1;
 	//backboard collision
 	} else if (this.x + this.radius >= hoop.hoopX - 60 && this.x + this.radius >= hoop.hoopX - 40 && this.y >= hoop.hoopY - 20 && this.y <= hoop.hoopY + 150) {
+        setTimeout( function () {hoop.newDraw();},100);
 		return 2;
 	//front rim collision
 	} else if (this.x + this.radius >= hoop.hoopX - 195 && this.x + this.radius <= hoop.hoopX - 160 && this.y + this.radius >= hoop.hoopY + 125 && this.y + this.radius <= hoop.hoopY + 155){
+        setTimeout( function () {hoop.newDraw();},100);
 		return 2;
 	//back rim collision
 	} else if (this.x + this.radius >= hoop.hoopX - 90 && this.x + this.radius <= hoop.hoopX - 40 && this.y + this.radius >= hoop.hoopY + 125 && this.y + this.radius <= hoop.hoopY + 150) {
+        setTimeout( function () {hoop.newDraw();},100);          
 		return 3;
 	}
 };
@@ -167,6 +172,7 @@ Ball.prototype.hoopAnimation = function(timeVar){
     if(this.y > 550) {
 		this.reset(timeVar);
     }
+    setTimeout( function () {hoop.newDraw();},100);
 };
 
 Ball.prototype.reset = function(timeVar){
@@ -180,12 +186,105 @@ Ball.prototype.reset = function(timeVar){
 };
 
 //draws all pieces of the hoop
-var Hoop = function (hoopX,hoopY,hoopEndX,hoopEndY) {
+var Hoop = function (hoopX,hoopY,hoopEndX,hoopEndY, ctx) {
 	this.hoopX = hoopX;
 	this.hoopY = hoopY;
 	this.hoopEndX = hoopEndX;
 	this.hoopEndY = hoopEndY;
+    this.ctx = ctx;
 };
+
+Hoop.prototype.newDraw = function () {
+    var that = this;
+    var ctx = that.ctx; 
+	//pole
+	that.ctx.strokeStyle = 'red';
+	that.ctx.lineWidth = 10;
+	that.ctx.lineCap = 'round';
+	that.ctx.beginPath();
+	that.ctx.moveTo(this.hoopX, this.hoopY);
+	that.ctx.lineTo(this.hoopEndX, this.hoopEndY);
+	that.ctx.stroke();
+	that.ctx.closePath();
+	//support beam one
+	that.ctx.strokeStyle = 'red';
+	that.ctx.lineWidth = 5.5;
+	that.ctx.lineCap = 'round';
+	that.ctx.beginPath();
+	that.ctx.moveTo(this.hoopX, this.hoopY + 20);
+	that.ctx.lineTo(this.hoopX - 50, this.hoopY + 50);
+	that.ctx.stroke();
+	that.ctx.closePath();
+	//support beam two
+	that.ctx.strokeStyle = 'red';
+	that.ctx.lineWidth = 5.5;
+	that.ctx.lineCap = 'round';
+	that.ctx.beginPath();
+	that.ctx.moveTo(this.hoopX, this.hoopY + 100);
+	that.ctx.lineTo(this.hoopX - 50, this.hoopY + 50);
+	that.ctx.stroke();
+	that.ctx.closePath();
+	//backboard
+	that.ctx.strokeStyle = 'red';
+	that.ctx.lineWidth = 10;
+	that.ctx.lineCap = 'round';
+	that.ctx.beginPath();
+	that.ctx.moveTo(this.hoopX - 50, this.hoopY);
+	that.ctx.lineTo(this.hoopX - 50, this.hoopY + 150);
+	that.ctx.stroke();
+	that.ctx.closePath();
+	//net
+	let startX = that.hoopX - 190;
+	let startY = that.hoopY + 130;
+	let endX = that.hoopX - 176;
+	let endY = that.hoopY + 210;
+	for (let i = 0; i < 12; i++){
+		that.ctx.strokeStyle = 'black';
+		that.ctx.lineWidth = '3';
+		that.ctx.lineCap = 'round';
+		if(i % 2 === 0){
+			ctx.beginPath();
+			ctx.moveTo(startX, startY);
+			ctx.lineTo(endX, endY);
+			ctx.stroke();
+			ctx.closePath();
+			startX += 10;
+			startY += 80;
+			endX += 10;
+			endY -= 80;
+		} else {
+			ctx.beginPath();
+			ctx.moveTo(startX, startY);
+			ctx.lineTo(endX, endY);
+			ctx.stroke();
+			ctx.closePath();
+			startX += 10;
+			startY -= 80;
+			endX += 10;
+			endY += 80;
+			}
+		}
+	//hoop
+	ctx.strokeStyle = 'green';
+	ctx.lineWidth = 8;
+	ctx.lineCap = 'round';
+	ctx.beginPath();
+	ctx.moveTo(that.hoopX - 50, that.hoopY + 130);
+	ctx.lineTo(that.hoopX - 190, that.hoopY + 130);
+	ctx.stroke();
+	ctx.closePath();
+	//base
+	ctx.beginPath();
+	ctx.fillStyle = 'gray';
+	ctx.fillRect(that.hoopEndX - 50, that.hoopEndY - 175, 100, 180);
+	ctx.closePath();
+    sleep(3000);
+};
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+};
+
 
 Hoop.prototype.draw = function (ctx) {
 	//pole

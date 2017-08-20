@@ -25,8 +25,8 @@
 		var cntx = this.canvas.getContext('2d');
 
 		//create instances of objects on page (ball and hoop pieces)
-		var newBall = new Ball(100,650);
-		var newHoop = new Hoop(1200,250,1200,800)
+		var newBall = new Ball(100,650, cntx);
+		var newHoop = new Hoop(1200,250,1200,800, cntx)
 		var newScore = new Score();
 		var newAngle = new AngleClass();
 
